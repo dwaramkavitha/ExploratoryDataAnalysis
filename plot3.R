@@ -1,0 +1,13 @@
+library(data.table)
+library(dplyr)
+powerConsumptionData<-fread("./household_power_consumption.txt",stringsAsFactors=FALSE,header=TRUE,sep=";",na.strings = "?")[Date %in% c("1/2/2007","2/2/2007")]
+## powerConsumptionData$Date<-as.Date(powerConsumptionData$Date,"%d/%m/%Y")
+powerConsumptionData<-mutate(powerConsumptionData,DateTime=paste(powerConsumptionData$Date,powerConsumptionData$Time))
+powerConsumptionData$DateTime<-strptime(powerConsumptionData$DateTime,"%d/%m/%Y %H:%M:%S")
+png(filename = "plot3.png",width=480,height = 480)
+with(powerConsumptionData,plot(DateTime,Sub_metering_1,type="n",xlab = "",ylab = "Energy Sub Metering"))
+with(powerConsumptionData,points(DateTime,Sub_metering_1,col="black",type="l"))
+with(powerConsumptionData,points(DateTime,Sub_metering_2,col="red",type="l"))
+with(powerConsumptionData,points(DateTime,Sub_metering_3,col="blue",type="l"))
+legend("topright",lwd=2,col=c("black","red","blue"),legend=c("Sub_metering_1","Sub_metering_2","Sub_metering_3"))
+dev.off()
